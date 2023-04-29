@@ -1,0 +1,55 @@
+# Assessing databases
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, class.source='klippy')
+
+
+library(tidyverse)
+
+df <- tribble(
+  ~country, ~y,  ~z, ~id,
+  "Germany", 2,  3.6, 1,
+  "Austria", 1,  8.5, 2,
+  "Brazil", 4,  2.5, 3,
+  "Brazil", 3,  3.5, 3
+)
+
+
+df2 <- tribble(
+  ~country, ~valid, ~id,
+  "Germany", 1, 1,
+  "Austria", 0, 2
+)
+
+
+
+#df <- as.data.frame(df)
+
+
+library(DBI)
+
+# Create an ephemeral in-memory RSQLite database
+con <- dbConnect(RSQLite::SQLite(), dbname = ":memory:")
+
+dbListTables(con)
+dbWriteTable(con, "mtcars", mtcars)
+dbWriteTable(con, "iris", iris)
+dbWriteTable(con, "df", df)
+dbWriteTable(con, "df2", df2)
+dbListTables(con)
+```
+
+
+
+
+
+- Learn: how to use string patterns and ranges to search data and how to sort and group data in result sets
+-  practice composing nested queries and execute select statements to access data from multiple tables.
+
+```{sql connection=con}
+SELECT * FROM df ;
+```
+
+
+## String values, Ranges and SET of values
+

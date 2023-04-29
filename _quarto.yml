@@ -1,0 +1,27 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Learning SQL the Badass Way"
+  author: "Edgar Treischl"
+  date: "4/29/2023"
+  chapters:
+    - "index.qmd"
+    - "01_intro.qmd"
+    - "02_data_management.qmd"
+    - "03_calculations.qmd"
+    - "references.qmd"
+
+
+bibliography: references.bib
+cover-image: cover.jpg
+
+format:
+  html:
+    theme: litera
+  pdf:
+    documentclass: scrreprt
+
+
+
