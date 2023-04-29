@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learning SQL the Badass Way - 3&nbsp; Calculations</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./02_data_management.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calculations</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Learning SQL the Badass Way</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_data_management.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_calculations.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calculations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#string-values-ranges-and-set-of-values" id="toc-string-values-ranges-and-set-of-values" class="nav-link active" data-scroll-target="#string-values-ranges-and-set-of-values"><span class="toc-section-number">3.1</span>  String values, ranges and set of values</a>
+  <ul class="collapse">
+  <li><a href="#sorting-result-sets" id="toc-sorting-result-sets" class="nav-link" data-scroll-target="#sorting-result-sets"><span class="toc-section-number">3.1.1</span>  Sorting Result Sets</a></li>
+  <li><a href="#grouping-result-sets" id="toc-grouping-result-sets" class="nav-link" data-scroll-target="#grouping-result-sets"><span class="toc-section-number">3.1.2</span>  Grouping result sets</a></li>
+  </ul></li>
+  <li><a href="#built-in-database-functions" id="toc-built-in-database-functions" class="nav-link" data-scroll-target="#built-in-database-functions"><span class="toc-section-number">3.2</span>  Built-in Database Functions</a>
+  <ul class="collapse">
+  <li><a href="#date-and-time-built-in-functions" id="toc-date-and-time-built-in-functions" class="nav-link" data-scroll-target="#date-and-time-built-in-functions"><span class="toc-section-number">3.2.1</span>  Date and Time Built-in Functions</a></li>
+  <li><a href="#sub-queries-and-nested-selects" id="toc-sub-queries-and-nested-selects" class="nav-link" data-scroll-target="#sub-queries-and-nested-selects"><span class="toc-section-number">3.2.2</span>  Sub-Queries and Nested Selects</a></li>
+  <li><a href="#working-with-multiple-tables" id="toc-working-with-multiple-tables" class="nav-link" data-scroll-target="#working-with-multiple-tables"><span class="toc-section-number">3.2.3</span>  Working with Multiple Tables</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="toc-section-number">3.3</span>  Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Calculations</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Do you really want to “learn SQL the badass way”? I outlined the scope of the blog in the first blog entry where I explained why I set the scope to R users and people with some programming languages. You may not find what you are looking for if you are not familiar with R or if you do not have any other experience to work with data, because I focus on the data management part in this blog. Thus, I hope you find some helpful ressources to learn SQL, but I focus on data wrangling aspects, without explaining basic concepts to handle data.</p>
+<p>In this session we learn how to use string patterns and ranges to search data. We will learn how to sort and group data to display result. Moreover, we practice composing nested queries and execute select statements to access data from multiple tables. For this reason I created a simple table that contains some attributes (y, z, id) about countries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df ;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="string-values-ranges-and-set-of-values" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="string-values-ranges-and-set-of-values"><span class="header-section-number">3.1</span> String values, ranges and set of values</h2>
+<p>We can use strings and the WHERE clause to search for specific observations. For instance, <code>WHERE countryname LIKE 'A%'</code> means that we search for country name column that start with the corresponding string. And we can use <code>%</code> as a wildcard character:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df <span class="kw">WHERE</span> country <span class="kw">LIKE</span> <span class="st">'A%'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Use a range to select entries that depending on some criteria (&gt; and &lt;). In SQL, we specify <code>WHERE values are between 100 and 200</code>. Keep in mind that values are inclusive within the range. For instance, we can use the mtcars dataset and restrict the table with cars that have a horsepower (hp) between 100 and 200, we can even use an <code>AND</code> to restrict to cars with a manual transmission (AM = 1)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> mtcars</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span> (hp <span class="kw">BETWEEN</span> <span class="dv">100</span> <span class="kw">and</span> <span class="dv">200</span>) <span class="kw">and</span> AM <span class="op">=</span> <span class="dv">1</span> ;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>5 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">mpg</th>
+<th style="text-align: right;">cyl</th>
+<th style="text-align: right;">disp</th>
+<th style="text-align: right;">hp</th>
+<th style="text-align: right;">drat</th>
+<th style="text-align: right;">wt</th>
+<th style="text-align: right;">qsec</th>
+<th style="text-align: right;">vs</th>
+<th style="text-align: right;">am</th>
+<th style="text-align: right;">gear</th>
+<th style="text-align: right;">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.620</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.875</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">30.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">95.1</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">3.77</td>
+<td style="text-align: right;">1.513</td>
+<td style="text-align: right;">16.90</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">19.7</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">145.0</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">3.62</td>
+<td style="text-align: right;">2.770</td>
+<td style="text-align: right;">15.50</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">121.0</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">4.11</td>
+<td style="text-align: right;">2.780</td>
+<td style="text-align: right;">18.60</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Another option gives us the <code>IN</code> operator. We can select columns by providing a list and the <code>IN</code> operator. As the next example shows, we select only those observations that match the provided list of the <code>IN</code> operator:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df <span class="kw">WHERE</span> country <span class="kw">IN</span> (<span class="st">'Brazil'</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="sorting-result-sets" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="sorting-result-sets"><span class="header-section-number">3.1.1</span> Sorting Result Sets</h3>
+<p>Sometimes we need to sort the entries alphabetically and we can do that with the <code>ORDER BY</code> clause. For instance, <code>ORDER BY country</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df <span class="kw">ORDER</span> <span class="kw">BY</span> country;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ul>
+<li>By default, the entries are ordered in an ascending order, but we can sort in a descending with <code>DESC</code> option as well:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df <span class="kw">ORDER</span> <span class="kw">BY</span> country <span class="kw">DESC</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Sometimes we have several observations per unit or any kind of structural order, which is why we may want to order a specific variable. We can sort the data by providing the number of the column we want to use a sort. As the next example shows, we can use y (or 2) to sort the data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> df <span class="kw">ORDER</span> <span class="kw">BY</span> y;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="grouping-result-sets" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="grouping-result-sets"><span class="header-section-number">3.1.2</span> Grouping result sets</h3>
+<p>To work with data, we have to get rid of duplicates and often it is much more easier if we restrict result set (data frame). To exclude duplicates we can use the <code>distinct()</code> command, which returns only distinct countries in our example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">distinct</span>(country) <span class="kw">FROM</span> df ;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In a similar fashion, maybe we have to clarify how many observations do we have per group? Or in our case, how many entries come from the same country and how often appears each level? In such a case we can count the county column and use the <code>group by</code> clause:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> country, <span class="fu">count</span> (country) <span class="kw">from</span> df <span class="kw">group</span> <span class="kw">by</span> country;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">count (country)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>As the last output showed, the count functions literally counts, but SQL does not give it a name, it simply displays what it does. We can change this ugly behaviour by providing a variable name and tell SQL how the column should be listed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> country, <span class="fu">count</span> (country) <span class="kw">AS</span> Count_Variable <span class="kw">from</span> df <span class="kw">group</span> <span class="kw">by</span> country;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">Count_Variable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Certainly, counting is not the only function. We can estimate the mean average with <code>AVG()</code>. And now the average, little SQL monkey!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> country, <span class="fu">AVG</span>(z) <span class="kw">as</span> Mean <span class="kw">from</span> df <span class="kw">group</span> <span class="kw">by</span> country;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">Mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">3.6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We can set a further conditions with a grouped by clause and add the <code>HAVING</code> option. As the next output shows, the <code>group by country HAVING count (country) &gt; 1</code> returns only countries with more than one observation counted:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> country, <span class="fu">count</span> (country) <span class="kw">AS</span> <span class="fu">Count</span> <span class="kw">from</span> df <span class="kw">group</span> <span class="kw">by</span> country <span class="kw">having</span> <span class="fu">count</span> (country) <span class="op">&gt;</span> <span class="dv">1</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let us try to remember that the <code>WHERE</code>clause is for entire result set; while <code>HAVING</code> works only for the <code>GROUPED BY</code> clause.</p>
+<p>Congratulations! At this point you are able to:</p>
+<ul>
+<li>Use the <code>WHERE</code> clause to refine your query results</li>
+<li>Use the wildcard character (<code>%</code>) as a substitute for unknown characters in a pattern</li>
+<li>Use <code>BETWEEN</code> … <code>AND</code> to specify a range of numbers</li>
+<li>We can sort query results into ascending or descending order, by using the <code>ORDER BY</code> clause</li>
+<li>And we can group query results by using the <code>GROUP BY</code> clause.</li>
+</ul>
+</section>
+</section>
+<section id="built-in-database-functions" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="built-in-database-functions"><span class="header-section-number">3.2</span> Built-in Database Functions</h2>
+<p>We saw in the last section that we can aggregate (count, avg) data and use column functions. Most of the basic statistics functions (sum, avg, min, max) are available and we can specify further conditions, for instance, if we want to summarize groups:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="fu">sum</span>(mpg) <span class="kw">as</span> sum_mpg <span class="kw">from</span> mtcars <span class="kw">where</span> hp <span class="op">&gt;</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">sum_mpg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">401.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Or we may use the scalar function and round to the nearest integer:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="fu">round</span>(drat, <span class="dv">1</span>) <span class="kw">as</span> round_drat <span class="kw">from</span> mtcars</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">round_drat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3.9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In SQL, there is a class of scalar functions. For instance, we can calculate the length of a string:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="fu">length</span>(country) <span class="kw">from</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">length(country)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Depending the SQL database you use, in db2 you can use the upper (UCASE) and lower case (LCASE) function for strings.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="fu">upper</span>(country) <span class="kw">from</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">upper(country)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">GERMANY</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AUSTRIA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BRAZIL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BRAZIL</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In case of Oracle the functions are called lower and upper.</p>
+<section id="date-and-time-built-in-functions" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="date-and-time-built-in-functions"><span class="header-section-number">3.2.1</span> Date and Time Built-in Functions</h3>
+<p>Talking about SQL databases, there are three different possibilities to work with date and time DB2.<br>
+- Date: <em>YYYYMMDD</em> (Year/Month/Day) - Time: <em>HHMMSS</em> (Hours/Min/Sec) - Timestamp: <em>YYYYMMDDHHMMSSZZZZZZ</em> (Date/Time/Microseconds)</p>
+<p>Depending on what you are up to do, there are functions to extract the day, month, day of month, day of week, day of year, week, hour, minute, and second. You can also extract the <code>current_date</code> and the <code>current_time</code>. Unfortunately, this does not work in Oracle the same way as in DB2, but to give you an example how to extract the day:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="dt">day</span>(<span class="dt">date</span>) <span class="kw">from</span> df <span class="kw">where</span> country <span class="op">=</span> <span class="st">'Germany'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sub-queries-and-nested-selects" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="sub-queries-and-nested-selects"><span class="header-section-number">3.2.2</span> Sub-Queries and Nested Selects</h3>
+<p>Sub-queries or sub selects are like regular queries but placed within parentheses and nested inside another query. This allows you to form more powerful queries than would have been otherwise possible. An example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="fu">avg</span>(mpg) <span class="kw">from</span> mtcars</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">avg(mpg)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">20.09062</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s say we want to select only the observations with higher values than the average of mpg:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> mtcars <span class="kw">where</span> mpg <span class="op">&gt;</span> <span class="fu">avg</span>(mpg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This would produce the following error: <code>misuse of aggregate function avg() Failed to execute SQL chunk</code>. One of the limitations of built in aggregate functions, like avg(), is that they cannot be evaluated in the WHERE clause always. Thus, we have to use sub-queries.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> mtcars <span class="kw">where</span> mpg <span class="op">&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">select</span> <span class="fu">avg</span>(mpg) <span class="kw">from</span> mtcars);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">mpg</th>
+<th style="text-align: right;">cyl</th>
+<th style="text-align: right;">disp</th>
+<th style="text-align: right;">hp</th>
+<th style="text-align: right;">drat</th>
+<th style="text-align: right;">wt</th>
+<th style="text-align: right;">qsec</th>
+<th style="text-align: right;">vs</th>
+<th style="text-align: right;">am</th>
+<th style="text-align: right;">gear</th>
+<th style="text-align: right;">carb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.620</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21.0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">160.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">2.875</td>
+<td style="text-align: right;">17.02</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">108.0</td>
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">3.85</td>
+<td style="text-align: right;">2.320</td>
+<td style="text-align: right;">18.61</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21.4</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">258.0</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">3.08</td>
+<td style="text-align: right;">3.215</td>
+<td style="text-align: right;">19.44</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">24.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">146.7</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">3.69</td>
+<td style="text-align: right;">3.190</td>
+<td style="text-align: right;">20.00</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">22.8</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">140.8</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">3.92</td>
+<td style="text-align: right;">3.150</td>
+<td style="text-align: right;">22.90</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">32.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">78.7</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">4.08</td>
+<td style="text-align: right;">2.200</td>
+<td style="text-align: right;">19.47</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">30.4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">75.7</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">4.93</td>
+<td style="text-align: right;">1.615</td>
+<td style="text-align: right;">18.52</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">33.9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">71.1</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">4.22</td>
+<td style="text-align: right;">1.835</td>
+<td style="text-align: right;">19.90</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21.5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">120.1</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">3.70</td>
+<td style="text-align: right;">2.465</td>
+<td style="text-align: right;">20.01</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Colum expressions help to set sub queries as a list of columns. Say we select variable Z:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> country, z <span class="kw">from</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">3.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>And in the next step we add the average of all countries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> country, z, <span class="fu">avg</span>(z) <span class="kw">as</span> avg_Z <span class="kw">from</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">avg_Z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">4.525</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This is obviously wrong. We cannot calculate on micro and macro level the same time, but we could use a sub-query (also called table expressions) to achieve it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> country, z, (<span class="kw">select</span> <span class="fu">avg</span>(z) <span class="kw">from</span> df <span class="kw">group</span> <span class="kw">by</span> country) <span class="kw">as</span> avg_Z <span class="kw">from</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">avg_Z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">8.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Sub-queries can also be applied in the from clause. They are called derived tables or table expressions, because the outer query uses the results of the sub-query as a data source</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> (<span class="kw">select</span> hp, vs <span class="kw">from</span> mtcars);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">hp</th>
+<th style="text-align: right;">vs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">93</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">123</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="working-with-multiple-tables" class="level3" data-number="3.2.3">
+<h3 data-number="3.2.3" class="anchored" data-anchor-id="working-with-multiple-tables"><span class="header-section-number">3.2.3</span> Working with Multiple Tables</h3>
+<p>There are several ways to access multiple tables in the same query. Namely, using sub-queries, implicit join, and join operators, such as <code>INNER JOIN</code> and <code>OUTER JOIN</code>. For instance:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df2;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">valid</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s say we want only observations from df that are listed in df2. In such a situation we can use a sub-queries:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> country <span class="kw">in</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">select</span> country <span class="kw">from</span> df2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Of course, you could add also information of the second table and include only countries with a certain value:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> country <span class="kw">in</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">select</span> country <span class="kw">from</span> df2 <span class="kw">where</span> valid <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Implicit joins implies that we can access multiple tables by specifying them in the <code>FROM</code> clause of the query. This leads to a CROSS JOIN (also known as Cartesian Join).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df, df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped">
+<caption>8 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+<th style="text-align: right;">id</th>
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">valid</th>
+<th style="text-align: right;">id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8.5</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Germany</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">3.5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Austria</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In DBL2 we can use the where clause to match data (see code); in Oracle there are other matching operaters</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df, df2 <span class="kw">where</span> df.<span class="kw">id</span> <span class="op">=</span> df.<span class="kw">id</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In case of long names, we can use shorter aliases for table names (or use column names with aliases in the SELECT clause):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> df A, df2 B <span class="kw">where</span> A.<span class="kw">id</span> <span class="op">=</span> B.<span class="kw">id</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.3</span> Summary</h2>
+<ul>
+<li><p>Most databases come with built-in functions that you can use in SQL statements to perform operations on data within the database itself.</p></li>
+<li><p>When you work with large datasets, you may save time by using built-in functions rather than first retrieving the data into your application and then executing functions on the retrieved data.</p></li>
+<li><p>Use sub-queries to form more powerful queries.</p></li>
+<li><p>A sub-select expression helps to evaluate some built-in aggregate functions like the average function.</p></li>
+<li><p>Derived tables or table expressions are sub-queries where the outer query uses the results of the sub-query as a data source.</p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./02_data_management.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data management</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
