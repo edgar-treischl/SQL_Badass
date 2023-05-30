@@ -6,6 +6,7 @@ book:
   title: "Learning SQL the Badass Way"
   author: "Edgar Treischl"
   date: "4/29/2023"
+  repo-url: https://github.com/edgar-treischl/SQL_Badass
   chapters:
     - "index.qmd"
     - "01_intro.qmd"
